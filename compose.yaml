@@ -1,0 +1,28 @@
+services:
+  store:
+    image: nginx:stable-alpine
+    restart: unless-stopped
+    volumes:
+      - ./public:/usr/share/nginx/html:ro
+    networks:
+      - coolify
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=coolify"
+      - "traefik.http.routers.nova-store.rule=Host(`${STORE_HOST:?Set STORE_HOST}`)"
+      - "traefik.http.routers.nova-store.entrypoints=https"
+      - "traefik.http.routers.nova-store.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.nova-store.service=nova-store"
+      - "traefik.http.services.nova-store.loadbalancer.server.port=80"
+      - "traefik.http.routers.nova-store-http.rule=Host(`${STORE_HOST}`)"
+      - "traefik.http.routers.nova-store-http.entrypoints=http"
+      - "traefik.http.routers.nova-store-http.middlewares=nova-store-https"
+      - "traefik.http.middlewares.nova-store-https.redirectscheme.scheme=https"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+networks:
+  coolify:
+    external: true
