@@ -1,0 +1,11 @@
+{% extends "admin/index.html" %}
+{% block content %}
+<div class="welcome"><div><span class="eyebrow">O TEU NEGÓCIO, NUM SÓ LUGAR</span><h2>Vamos dar forma à tua loja.</h2><p>Gere o catálogo, acompanha o stock e organiza as encomendas.</p></div><a class="store-link" href="/" target="_blank" rel="noopener">Visitar a loja ↗</a></div>
+{% if stats %}<div class="metrics">
+<a href="{% url 'admin:shop_product_changelist' %}?active__exact=1"><span>Produtos publicados</span><strong>{{ stats.products }}</strong></a>
+<a href="{% url 'admin:shop_product_changelist' %}"><span>Produtos com stock ≤ 5</span><strong>{{ stats.low_stock }}</strong></a>
+<a href="{% url 'admin:shop_order_changelist' %}"><span>Rascunhos e confirmadas</span><strong>{{ stats.orders }}</strong></a>
+<a href="{% url 'admin:shop_order_changelist' %}?payment__exact=paid"><span>Pagamentos registados*</span><strong>{{ stats.paid|floatformat:2 }} €</strong></a>
+</div>{% endif %}
+<div class="store-note"><b>A loja continua em preparação.</b> As encomendas são registadas manualmente. O site público ainda não aceita compras ou pagamentos. *Valor dos registos manuais pagos, sem encomendas canceladas.</div>
+{{ block.super }}{% endblock %}
